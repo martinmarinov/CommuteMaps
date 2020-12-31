@@ -1,0 +1,8 @@
+.leaflet-popup-content-wrapper {
+  background: none;
+  box-shadow: none;
+}
+
+.leaflet-popup-content {
+  margin: 0;
+}

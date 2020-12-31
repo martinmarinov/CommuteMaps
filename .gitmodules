@@ -1,0 +1,3 @@
+[submodule "public/mapnificent_cities"]
+	path = public/mapnificent_cities
+	url = https://github.com/mapnificent/mapnificent_cities.git
