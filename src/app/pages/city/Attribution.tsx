@@ -17,6 +17,7 @@ import { ModalAlert } from "../../ui/ModalAlert";
 import ReactMarkdown from "react-markdown";
 import { MapTileProvider } from "../../map/MapRender";
 import HTMLReactParser from "html-react-parser";
+import { SOURCE_CODE_LOCATION } from "../../Constants";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -38,7 +39,11 @@ const TransportDataAttribution = ({ city }: { city: City }) => {
     return (
       <Typography>
         Copyright Holders information for {city.cityname} public transport data
-        is available in the source code.
+        is available in{" "}
+        <Link href={SOURCE_CODE_LOCATION} target="_blank">
+          the source code
+        </Link>
+        .
       </Typography>
     );
   } else {
@@ -86,20 +91,28 @@ const OpenSourceAttribution = () => {
   return (
     <>
       <Typography>
-        All open source software used can be found in the source code. Most
-        notable attribution:
+        All open source software used can be found in{" "}
+        <Link href={SOURCE_CODE_LOCATION} target="_blank">
+          the source code
+        </Link>
+        . Notable mentions:
       </Typography>
       <List>
         <ListItem className={classes.dialogList}>
-          <Link href="https://github.com/mapnificent/mapnificent_cities">
+          <Link
+            href="https://github.com/mapnificent/mapnificent_cities"
+            target="_blank"
+          >
             mapnificent_cities
           </Link>
-        </ListItem>
-        <ListItem className={classes.dialogList}>
-          <Link href="https://leafletjs.com/">leaflet</Link>
-        </ListItem>
-        <ListItem className={classes.dialogList}>
-          <Link href="https://material-ui.com/">Material UI</Link>
+          ,&nbsp;{" "}
+          <Link href="https://leafletjs.com/" target="_blank">
+            leaflet
+          </Link>
+          ,&nbsp;{" "}
+          <Link href="https://material-ui.com/" target="_blank">
+            Material UI
+          </Link>
         </ListItem>
       </List>
     </>

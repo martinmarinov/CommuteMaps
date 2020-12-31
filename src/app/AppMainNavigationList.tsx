@@ -14,6 +14,7 @@ import {
 } from "@material-ui/core";
 import React, { useState } from "react";
 import { ModalAlert } from "./ui/ModalAlert";
+import { SOURCE_CODE_LOCATION, SOURCE_CODE_LOCATION_LABEL } from "./Constants";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -35,7 +36,12 @@ export const About = () => {
         <ListItemText primary="About" />
       </ListItem>
       <ModalAlert title="About CommuteMaps.com" severity="info" open={open}>
-        <Typography></Typography>
+        <Typography>
+          Full source:{" "}
+          <MaterialLink href={SOURCE_CODE_LOCATION} target="_blank">
+            {SOURCE_CODE_LOCATION_LABEL}
+          </MaterialLink>
+        </Typography>
         <Typography>
           CommuteMaps.com creates public transport travel time maps for some of
           the biggest cities in the world. It features different modes that
@@ -58,12 +64,12 @@ export const About = () => {
         </Typography>
         <List>
           <ListItem className={classes.dialogList}>
-            <MaterialLink href="https://martinmarinov.info/">
+            <MaterialLink href="https://martinmarinov.info/" target="_blank">
               Developer: Martin Marinov
             </MaterialLink>
           </ListItem>
           <ListItem className={classes.dialogList}>
-            <MaterialLink href="https://www.sheza.design/">
+            <MaterialLink href="https://www.sheza.design/" target="_blank">
               Design: Snezhana Marinova
             </MaterialLink>
           </ListItem>

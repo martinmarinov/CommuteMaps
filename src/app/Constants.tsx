@@ -6,6 +6,9 @@ export const DEFAULT_MAP_TILE_PROVIDER = {
     '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; <a href="https://carto.com/attribution">CARTO</a>',
 };
 
+export const SOURCE_CODE_LOCATION = "https://github.com/martinmarinov/CommuteMaps";
+export const SOURCE_CODE_LOCATION_LABEL = "CommuteMaps@github";
+
 // This is a key assumption as it affects reachability
 export const WALKING_SPEED_METERS_PER_MINUTE = 80.0;
 
