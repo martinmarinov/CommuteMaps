@@ -1,13 +1,13 @@
 import "./App.css";
 import { CityPage } from "./pages/city/CityPage";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { HashRouter, Switch, Route } from "react-router-dom";
 import React from "react";
 import { HomePage } from "./pages/home/HomePage";
 
 export const App = () => {
   return (
     <div className="App">
-      <Router>
+      <HashRouter basename='/'>
         <Switch>
           <Route exact path="/">
             <HomePage />
@@ -16,7 +16,7 @@ export const App = () => {
             <CityPage />
           </Route>
         </Switch>
-      </Router>
+      </HashRouter>
     </div>
   );
 };
