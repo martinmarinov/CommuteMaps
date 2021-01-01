@@ -8,14 +8,22 @@ import {
   LINE_CHANGE_TIME,
   MAX_LINE_CHANGES,
   MAX_WALKING_TIME,
+  MAX_WALKING_TIME_MINUTES,
 } from "../Constants";
 import { TravelOption } from "./MapnificentNetwork";
 import { ModelMarker } from "./ModelMarker";
 
 export type ModelPoi = {
+  // Maximum area you can cover on foot from this stop in walkTime. This is the maximum
+  // rendering size of a poi as per the quad tree.
   bounds: LatLngBounds;
+  // how many line changes to reach this stop
   lineChanges: number;
+  // time you can walk from ths stop. Do not try to render any areas larger than this or
+  // the rendering function will fail as the quad tree is using this number as radius.
   walkTime: number;
+  // travel time to reach this stop
+  travelTime: number;
 };
 
 export type CompiledModel = {
@@ -43,7 +51,7 @@ const findAllReachableStops = (
     remainingTime: number,
     lineChanges: number
   ) => {
-    const walkingTime = Math.min(remainingTime, MAX_WALKING_TIME);
+    const walkingTime = MAX_WALKING_TIME(remainingTime);
     model.searchTree
       .getIntersecting(position.toBounds(2 * timeToDistance(walkingTime)))
       .forEach((modelStop) => {
@@ -67,7 +75,7 @@ const findAllReachableStops = (
   ) => {
     const walkingDistance = nullthrows(travelOption.WalkDistance);
     const walkingTime = distanceToTime(walkingDistance);
-    if (walkingTime > MAX_WALKING_TIME) {
+    if (walkingTime > MAX_WALKING_TIME_MINUTES) {
       // we won't walk for that long
       return;
     }
@@ -175,22 +183,24 @@ export function compileModel(model: Model, marker: ModelMarker): CompiledModel {
   const pois = stops
     .filter((stop: StopWithTime) => stop !== undefined)
     .map((stop: StopWithTime) => {
-      const walkingTime = Math.min(stop.remainingTime, MAX_WALKING_TIME);
+      const walkingTime = MAX_WALKING_TIME(stop.remainingTime);
       return {
         bounds: stop.modelStop.position.toBounds(
           2 * timeToDistance(walkingTime)
         ),
         lineChanges: stop.lineChanges,
         walkTime: walkingTime,
+        travelTime: marker.maxTravelTime - stop.remainingTime,
       };
     });
 
   // Don't forget to add the origin positionin case we  want to simply walk
-  const maxWalkTmeFromOrigin = Math.min(marker.maxTravelTime, MAX_WALKING_TIME);
+  const maxWalkTmeFromOrigin = MAX_WALKING_TIME(marker.maxTravelTime);
   pois.push({
     bounds: marker.position.toBounds(2 * timeToDistance(maxWalkTmeFromOrigin)),
     lineChanges: 0,
     walkTime: maxWalkTmeFromOrigin,
+    travelTime: 0,
   });
   return {
     allPois: quadTreeFromAreaPois(pois),

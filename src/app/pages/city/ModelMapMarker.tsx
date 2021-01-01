@@ -34,6 +34,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 type Props = {
   marker: ModelMarker;
+  allowMarkerTimeChange?: boolean;
   onMarkerChange: (newMarker: ModelMarker) => void;
   onMarkerDelete?: () => void;
 };
@@ -42,6 +43,7 @@ export const ModelMapMarker = ({
   marker,
   onMarkerChange,
   onMarkerDelete,
+  allowMarkerTimeChange = true,
 }: Props) => {
   const classes = useStyles();
   const setMarkerPosition = useCallback(
@@ -61,46 +63,48 @@ export const ModelMapMarker = ({
       minWidth={MIN_WIDTH_OF_POPUP}
       closeButton={true}
     >
-      <Grid container alignItems="flex-end" direction="column">
-        <Grid
-          container
-          alignItems="center"
-          spacing={2}
-          className={
-            onMarkerDelete
-              ? classes.sliderContainerWithButtons
-              : classes.sliderContainerWithoutButtons
-          }
-        >
-          <Grid item>
-            <Icon>access_time</Icon>
+      {allowMarkerTimeChange && (
+        <Grid container alignItems="flex-end" direction="column">
+          <Grid
+            container
+            alignItems="center"
+            spacing={2}
+            className={
+              onMarkerDelete
+                ? classes.sliderContainerWithButtons
+                : classes.sliderContainerWithoutButtons
+            }
+          >
+            <Grid item>
+              <Icon>access_time</Icon>
+            </Grid>
+            <Grid item xs>
+              <Slider
+                value={marker.maxTravelTime}
+                step={TRAVEL_TIME_STEP}
+                min={MIN_TRAVEL_TIME}
+                max={MAX_TRAVEL_TIME}
+                valueLabelDisplay="auto"
+                onChange={(_event, newValue) => {
+                  newValue = newValue as number;
+                  if (newValue !== marker.maxTravelTime) {
+                    setTravelTime(newValue);
+                  }
+                }}
+              />
+            </Grid>
           </Grid>
-          <Grid item xs>
-            <Slider
-              value={marker.maxTravelTime}
-              step={TRAVEL_TIME_STEP}
-              min={MIN_TRAVEL_TIME}
-              max={MAX_TRAVEL_TIME}
-              valueLabelDisplay="auto"
-              onChange={(_event, newValue) => {
-                newValue = newValue as number;
-                if (newValue !== marker.maxTravelTime) {
-                  setTravelTime(newValue);
-                }
-              }}
-            />
-          </Grid>
+          {onMarkerDelete && (
+            <Grid item>
+              <IconButton onClick={onMarkerDelete} size="small">
+                <Icon fontSize="small" className={classes.deleteButton}>
+                  delete_forever
+                </Icon>
+              </IconButton>
+            </Grid>
+          )}
         </Grid>
-        {onMarkerDelete && (
-          <Grid item>
-            <IconButton onClick={onMarkerDelete} size="small">
-              <Icon fontSize="small" className={classes.deleteButton}>
-                delete_forever
-              </Icon>
-            </IconButton>
-          </Grid>
-        )}
-      </Grid>
+      )}
     </PaperMapMarker>
   );
 };

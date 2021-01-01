@@ -9,6 +9,7 @@ import {
   defaultModelMarker,
   useGlobalModelMarkersState,
 } from "../model/ModelMarker";
+import { HEATMAP_COLORS } from "../Constants";
 
 const getPoiColor = (poi: ModelPoi): string | undefined => {
   switch (poi.lineChanges) {
@@ -16,11 +17,11 @@ const getPoiColor = (poi: ModelPoi): string | undefined => {
     case 1:
       return undefined;
     case 2:
-      return "rgba(50,255,50,0.4)";
+      return HEATMAP_COLORS[0];
     case 3:
-      return "rgba(255,255,50,0.4)";
+      return HEATMAP_COLORS[1];
     default:
-      return "rgba(255,50,50,0.4)";
+      return HEATMAP_COLORS[2];
   }
 };
 

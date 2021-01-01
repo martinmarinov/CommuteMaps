@@ -27,7 +27,7 @@ const commuteMapIncon = icon({
 type Props = {
   position: LatLng;
   onPositionChange?: (newPosition: LatLng) => void;
-  children: ReactNode;
+  children?: ReactNode;
   closeButton: boolean;
   minWidth?: number;
 };
@@ -46,11 +46,13 @@ export const PaperMapMarker = ({
       onPositionChange={onPositionChange}
       icon={commuteMapIncon}
     >
-      <Popup minWidth={minWidth} closeButton={closeButton}>
-        <Paper className={classes.paper} elevation={3}>
-          {children}
-        </Paper>
-      </Popup>
+      {children && (
+        <Popup minWidth={minWidth} closeButton={closeButton}>
+          <Paper className={classes.paper} elevation={3}>
+            {children}
+          </Paper>
+        </Popup>
+      )}
     </MapMarker>
   );
 };

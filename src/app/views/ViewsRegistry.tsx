@@ -2,6 +2,7 @@ import React, { ReactNode } from "react";
 import { BestCommonTravelView } from "./BestCommonTravelView";
 import { LineChangeView } from "./LineChangeView";
 import { BasicReachabilityView } from "./BasicReachabilityView";
+import { CommuteTimeView } from "./CommuteTimeView";
 
 export type View = {
   key: string; // unique and url friendly
@@ -13,10 +14,21 @@ export type View = {
 // Add your view here for it to be displayed as an option
 export const ALL_VIEWS: View[] = [
   {
-    key: "lc",
-    short_name: "Show number of changes",
+    key: "tt",
+    short_name: "Commute time",
     description: [
-      `This mode helps to visualize the number of public transport changes needed to reach different
+      `Commute time mode helps visualize 1 hour commute journey starting from a given location. Each color represents additional
+      15 minutes of travel time.`,
+      `You will see a heatmap-style visualization illustrating commute times for reaching different areas on
+      the map. If you feel creative, you can print this out and create a useful but stylish art poster wall decor.`,
+    ],
+    component: <CommuteTimeView />,
+  },
+  {
+    key: "lc",
+    short_name: "Number of changes",
+    description: [
+      `Number of changes mode helps visualize the number of public transport changes needed to reach different
        areas in the city for a given travel time.`,
       `Each color represents different number of changes, starting with walking on foot. Move the marker 
       and change the travel time to explore.`,
@@ -27,7 +39,7 @@ export const ALL_VIEWS: View[] = [
     key: "ct",
     short_name: "Best areas to meet",
     description: [
-      `This mode can be used to find the best place to meet a friend. Place one of the pointers at the place 
+      `Best areas to meet mode can be used to find the best place to meet a friend. Place one of the pointers at the place 
       you live and the other one at the place your friend lives. Then chose the maximum time each of you is 
       willing to travel via public transport.`,
       `You will see a map of the areas each of you can reach. Where these two areas overlap would be the ideal
@@ -39,8 +51,8 @@ export const ALL_VIEWS: View[] = [
     key: "br",
     short_name: "Basic reachibility",
     description: [
-      `This modes shows the areas that can be reached via public transport within given travel time. It supports
-      multiple map positions.`,
+      `Basic reachibility mode shows the areas that can be reached via public transport within given travel time. 
+      It supports multiple map positions.`,
       `This mode is heavily inspired by the linkes of Mapnificent.net and Mapumental.com. However results here
       may differ as CommuteMaps.com uses different algorithms.`,
     ],
