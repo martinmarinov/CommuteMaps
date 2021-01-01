@@ -1,6 +1,7 @@
 import React, { ReactNode } from "react";
 import { BestCommonTravelView } from "./BestCommonTravelView";
 import { LineChangeView } from "./LineChangeView";
+import { BasicReachabilityView } from "./BasicReachabilityView";
 
 export type View = {
   key: string; // unique and url friendly
@@ -33,6 +34,17 @@ export const ALL_VIEWS: View[] = [
       spots for meeting.`,
     ],
     component: <BestCommonTravelView />,
+  },
+  {
+    key: "br",
+    short_name: "Basic reachibility",
+    description: [
+      `This modes shows the areas that can be reached via public transport within given travel time. It supports
+      multiple map positions.`,
+      `This mode is heavily inspired by the linkes of Mapnificent.net and Mapumental.com. However results here
+      may differ as CommuteMaps.com uses different algorithms.`,
+    ],
+    component: <BasicReachabilityView />,
   },
 ];
 

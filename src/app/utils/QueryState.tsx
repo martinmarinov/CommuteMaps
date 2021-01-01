@@ -37,9 +37,6 @@ export const useQueryArrayParameterState = function <T>(
     }
     const decodedValue = codec.decoder(stringValue);
 
-    // Make sure decoded value doesn't have too many elements, if it does, trim
-    decodedValue.splice(initialValue.length);
-
     // If decoded value doesn't have enough elements, add some
     for (let id = decodedValue.length; id < initialValue.length; id++) {
       decodedValue.push(initialValue[id]);
