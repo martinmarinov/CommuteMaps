@@ -21,7 +21,7 @@ const onRender = (
     .flat();
 
   d.fill("rgba(50,50,50,0.2)");
-  allPois.forEach((poi) => d.drawCircle(poi.bounds));
+  d.drawCircles(allPois.map((p) => p.bounds));
 };
 
 export const BasicReachabilityView = () => {

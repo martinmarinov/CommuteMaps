@@ -111,9 +111,12 @@ const onRender = (
   d.fill("rgba(50,50,50,0.4)");
   RENDER_SET_UP.forEach((renderer, rid) => {
     const color = renderer.color;
-    rendersPassesPerBound[rid]
-      .filter((bound) => bound !== undefined)
-      .forEach((bounds) => d.drawCircle(nullthrows(bounds), color));
+    d.drawCircles(
+      rendersPassesPerBound[rid].filter(
+        (bound) => bound !== undefined
+      ) as LatLngBounds[],
+      color
+    );
   });
 };
 
