@@ -36,28 +36,6 @@ const RENDER_SET_UP = [
   },
 ];
 
-const getBounds = (
-  p: ModelPoi,
-  maxTravelTime: number,
-  tileBounds: LatLngBounds
-) => {
-  if (p.travelTime >= maxTravelTime) {
-    // Unreachable in that time
-    return undefined;
-  }
-
-  const walkingTime = MAX_WALKING_TIME(maxTravelTime - p.travelTime);
-  const newBounds = p.bounds
-    .getCenter()
-    .toBounds(2 * timeToDistance(walkingTime));
-
-  if (!newBounds.intersects(tileBounds)) {
-    // It's possible that the new bounds are not renderable
-    return undefined;
-  }
-  return newBounds;
-};
-
 const onRender = (
   compiledModels: CompiledModel[],
   ctx: CanvasRenderingContext2D,
@@ -71,44 +49,57 @@ const onRender = (
 
   const compiledModel = nullthrows(compiledModels[0]);
   const allPois = compiledModel.allPois.getIntersecting(tileInfo.tileBounds);
-  const sortedByTravelTimePois = allPois
-    .sort((a, b) => a.travelTime - b.travelTime)
-    .map((p) => {
-      return {
-        ...p,
-        rendererBounds: RENDER_SET_UP.map((renderer) =>
-          getBounds(p, renderer.maxTravelTime, tileInfo.tileBounds)
-        ),
-      };
-    });
+
+  const allBoundsPerRender: (
+    | LatLngBounds
+    | undefined
+  )[][] = RENDER_SET_UP.map((_) => []);
+
+  allPois.forEach((p, pid) => {
+    for (let i = 0; i < RENDER_SET_UP.length; i++) {
+      const renderer = RENDER_SET_UP[i];
+      if (p.travelTime >= renderer.maxTravelTime) {
+        // Unreachable anymore, next time maxTravelTime will get even smaller
+        break;
+      }
+      const walkingTimeUnconstrained = renderer.maxTravelTime - p.travelTime;
+      const walkingTime = MAX_WALKING_TIME(walkingTimeUnconstrained);
+      const newBounds = p.bounds
+        .getCenter()
+        .toBounds(2 * timeToDistance(walkingTime));
+      if (!newBounds.intersects(tileInfo.tileBounds)) {
+        // The point is no longer renderable within this tile
+        // over the next passes as maxTravelTime gets lower
+        // there will be no more chances to render this tile
+        break;
+      }
+      allBoundsPerRender[i][pid] = newBounds;
+    }
+
+    // Second pass, remove bounds that overlap with next pass
+    // as these are no-ops
+    for (let i = 0; i < RENDER_SET_UP.length - 1; i++) {
+      const bounds = allBoundsPerRender[i][pid];
+      const nextBounds = allBoundsPerRender[i + 1][pid];
+      if (
+        bounds !== undefined &&
+        nextBounds !== undefined &&
+        nextBounds.contains(bounds)
+      ) {
+        allBoundsPerRender[i][pid] = undefined;
+      }
+    }
+  });
 
   d.fill("rgba(50,50,50,0.4)");
 
-  RENDER_SET_UP.forEach((renderer, renderer_id) => {
-    for (let id = 0; id < sortedByTravelTimePois.length; id++) {
-      const p = sortedByTravelTimePois[id];
-      if (p.travelTime >= renderer.maxTravelTime) {
-        // We know all of the other ones will be undefined
-        // as pois are sorted
-        break;
+  allBoundsPerRender.forEach((allBounds, id) => {
+    const color = RENDER_SET_UP[id].color;
+    for (let i = 0; i < allBounds.length; i++) {
+      const bounds = allBounds[i];
+      if (bounds !== undefined) {
+        d.drawCircle(bounds, color);
       }
-
-      const bounds = p.rendererBounds[renderer_id];
-      if (bounds === undefined) {
-        // The poi is never visible, so don't bother rendering
-        continue;
-      }
-
-      const nextBounds = p.rendererBounds[renderer_id + 1];
-      if (nextBounds !== undefined) {
-        // If this poi will be rendered in the next pass
-        if (nextBounds.contains(bounds)) {
-          // No need to render this time as next pass will
-          // draw completely over this circle
-          continue;
-        }
-      }
-      d.drawCircle(bounds, renderer.color);
     }
   });
 };
