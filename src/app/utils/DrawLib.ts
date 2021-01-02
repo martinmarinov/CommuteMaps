@@ -21,6 +21,30 @@ export default class DrawLib {
     );
   }
 
+  cutOutFill(fillStyle?: string | CanvasGradient | CanvasPattern) {
+    // Cutout pass
+    this.ctx.globalCompositeOperation = "destination-out";
+    this.ctx.fillStyle = "rgba(1,1,1,1)";
+    this.ctx.fillRect(
+      0,
+      0,
+      this.tileInfo.tileSizePx.x,
+      this.tileInfo.tileSizePx.y
+    );
+
+    if (fillStyle !== undefined) {
+      // Stamp pass
+      this.ctx.globalCompositeOperation = "source-over";
+      this.ctx.fillStyle = fillStyle;
+      this.ctx.fillRect(
+        0,
+        0,
+        this.tileInfo.tileSizePx.x,
+        this.tileInfo.tileSizePx.y
+      );
+    }
+  }
+
   drawCircle(
     bounds: LatLngBounds,
     fillStyle?: string | CanvasGradient | CanvasPattern
@@ -31,7 +55,7 @@ export default class DrawLib {
 
     // Cutout pass
     this.ctx.globalCompositeOperation = "destination-out";
-    this.ctx.fillStyle = 'rgba(1,1,1,1)';
+    this.ctx.fillStyle = "rgba(1,1,1,1)";
 
     this.ctx.beginPath();
     this.ctx.arc(centerPx.x, centerPx.y, radPx, 0, 2 * Math.PI, false);
