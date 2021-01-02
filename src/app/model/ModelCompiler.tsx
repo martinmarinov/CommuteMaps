@@ -9,8 +9,9 @@ import React, {
 } from "react";
 import nullthrows from "nullthrows";
 import { CompiledModel, compileModel } from "./CompiledModel";
-import { ModelContextInterface, useModelContext } from "./ModelFetcher";
-import { ModelMarker } from "./ModelMarker";
+import { useModelContext } from "./ModelFetcher";
+import { markersEqual, ModelMarker } from "./ModelMarker";
+import { City } from "../utils/CityData";
 
 export const CompiledModelsContext = createContext<CompiledModel[] | null>(
   null
@@ -44,7 +45,7 @@ const compiledModelReducer = (
 
 export const ModelCompiler = ({ children, markers }: Props) => {
   const modelContext = useModelContext();
-  const lastUsedModel = useRef<ModelContextInterface>();
+  const lastUsedCity = useRef<City>();
 
   const [compiledModels, dispatchCompiledModels] = useReducer(
     compiledModelReducer,
@@ -52,14 +53,16 @@ export const ModelCompiler = ({ children, markers }: Props) => {
   );
 
   const dirtyPositions = useMemo(() => {
-    const modelHasCHanged = lastUsedModel?.current !== modelContext;
+    const cityHasChanged = lastUsedCity?.current !== modelContext.city;
     return markers
       .map((marker, id) =>
-        modelHasCHanged || compiledModels[id]?.marker !== marker ? id : null
+        cityHasChanged || !markersEqual(compiledModels[id]?.marker, marker)
+          ? id
+          : null
       )
       .filter((marker_id) => marker_id !== null)
       .map((marker_id) => nullthrows(marker_id));
-  }, [modelContext, lastUsedModel, compiledModels, markers]);
+  }, [modelContext, lastUsedCity, compiledModels, markers]);
 
   const deletedMarkersCount = compiledModels.length - markers.length;
   useEffect(() => {
@@ -77,13 +80,13 @@ export const ModelCompiler = ({ children, markers }: Props) => {
       dispatchCompiledModels({ id });
     }
 
-    lastUsedModel.current = modelContext;
+    lastUsedCity.current = modelContext.city;
   }, [
     dirtyPositions,
     deletedMarkersCount,
     markers,
     modelContext,
-    lastUsedModel,
+    lastUsedCity,
   ]);
 
   return (

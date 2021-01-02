@@ -8,6 +8,16 @@ export type ModelMarker = {
   maxTravelTime: number;
 };
 
+export const markersEqual = (
+  a: ModelMarker | undefined,
+  b: ModelMarker | undefined
+) =>
+  (a === undefined && b === undefined) ||
+  (a !== undefined &&
+    b !== undefined &&
+    a.position.distanceTo(b.position) < 1 &&
+    Math.abs(a.maxTravelTime - b.maxTravelTime) < 1);
+
 // Just a heuristics for creating deterministic points around city center
 export const defaultModelMarker = (
   city: City,

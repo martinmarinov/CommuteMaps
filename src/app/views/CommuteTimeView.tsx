@@ -1,6 +1,6 @@
 import React from "react";
 import { TileInfo } from "../map/CanvasOverlay";
-import { CompiledModel, ModelPoi } from "../model/CompiledModel";
+import { CompiledModel } from "../model/CompiledModel";
 import DrawLib from "../utils/DrawLib";
 import { CompiledModelOverlay } from "../model/CompiledModelOverlay";
 import { ModelMapMarker } from "../pages/city/ModelMapMarker";
